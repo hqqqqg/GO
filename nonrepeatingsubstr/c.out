@@ -1,0 +1,11 @@
+mode: set
+google/nonrepeatingsubstr/nonrepeating.go:12.47,14.30 2 1
+google/nonrepeatingsubstr/nonrepeating.go:14.30,16.3 1 0
+google/nonrepeatingsubstr/nonrepeating.go:17.2,20.31 3 1
+google/nonrepeatingsubstr/nonrepeating.go:20.31,21.58 1 1
+google/nonrepeatingsubstr/nonrepeating.go:21.58,23.4 1 1
+google/nonrepeatingsubstr/nonrepeating.go:24.3,24.28 1 1
+google/nonrepeatingsubstr/nonrepeating.go:24.28,26.4 1 1
+google/nonrepeatingsubstr/nonrepeating.go:27.3,27.23 1 1
+google/nonrepeatingsubstr/nonrepeating.go:30.2,30.18 1 1
+google/nonrepeatingsubstr/nonrepeating.go:33.13,53.2 9 0
