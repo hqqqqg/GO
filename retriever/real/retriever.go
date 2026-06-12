@@ -16,8 +16,8 @@ func (r *Retriever) Get(url string) string {
 	if err != nil {
 		panic(err)
 	}
-	result, err := httputil.DumpResponse(resp, true)
-	defer resp.Body.Close() //关闭响应的body
+	result, err := httputil.DumpResponse(resp, true) //返回http文本，true返回body内容
+	defer resp.Body.Close()                          //关闭响应的body
 	if err != nil {
 		panic(err)
 	}

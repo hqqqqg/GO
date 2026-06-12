@@ -11,35 +11,69 @@ type Retriever interface {
 	Get(url string) string
 }
 
+type Poster interface {
+	Post(url string, form map[string]string) string
+}
+
+const url = "http://www.imooc.com"
+
+func post(p Poster) {
+	p.Post(url,
+		map[string]string{
+			"name":   "1",
+			"course": "2",
+		})
+}
+
+type RetrieverPoster interface {
+	Retriever
+	Poster
+}
+
+func session(s RetrieverPoster) string {
+	s.Post(url, map[string]string{
+		"contents": "1",
+	})
+	return s.Get(url)
+
+}
+
 func download(r Retriever) string {
-	return r.Get("http.//www.imooc.com")
+	return r.Get(url)
+
 }
 
 func main() {
 	var r Retriever
-	r = mock.Retriever{"this is a fake imooc.com"}
+	retriever := mock.Retriever{"fake"}
+	r = &retriever
+	// d := download(r)
+	// fmt.Println(d)
 	inspect(r)
 
 	r = &real.Retriever{
 		UserAgent: "Mozilla/5.0",
 		TimeOut:   time.Minute}
 	inspect(r)
-
-	if mockretriever, ok := r.(mock.Retriever); ok {
-		fmt.Println("contents:", mockretriever.Contents) //老是大小写混着写
+	if mockRetriever, ok := r.(*mock.Retriever); ok {
+		fmt.Println("contents:", mockRetriever.Contents)
 	} else {
-		fmt.Println("not a mock retriever")
+		fmt.Println("no ")
 	}
 
+	fmt.Println(session(&retriever))
 }
 
 func inspect(r Retriever) {
-	fmt.Printf("%T,%v\n", r, r) //接口里面是类型和值/指针
+	fmt.Println("Inspenct", r)
+	fmt.Printf(">%T %v\n", r, r)
+	fmt.Println("Type switch:")
 	switch v := r.(type) {
-	case mock.Retriever:
-		fmt.Println("contents:", v.Contents)
-	case real.Retriever:
+	case *mock.Retriever:
+		fmt.Println("Contents:", v.Contents)
+	case *real.Retriever:
 		fmt.Println("UserAgent:", v.UserAgent)
+
 	}
 
 }

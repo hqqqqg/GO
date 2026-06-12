@@ -20,8 +20,8 @@ func tryDefer() {
 }
 
 func writeFile(filename string) {
-	file, err := os.OpenFile(filename, os.O_EXCL|os.O_CREATE, 0666)
-	err = errors.New("this is a custom error") //自己写error，error也是一个interface
+	file, err := os.OpenFile(filename, os.O_EXCL|os.O_CREATE, 0666) //文件存在就报错
+	err = errors.New("this is a custom error")                      //自己写error，error也是一个interface
 	if err != nil {
 		if pathError, ok := err.(*os.PathError); !ok { //判断error什么类型
 			panic(err) //不知道什么类型
@@ -31,7 +31,7 @@ func writeFile(filename string) {
 				pathError.Path, //fib.txt
 				pathError.Err)  // file exists
 		}
-		return
+		return //有错误就回去吧
 	}
 	defer file.Close()
 	writer := bufio.NewWriter(file) //缓冲区

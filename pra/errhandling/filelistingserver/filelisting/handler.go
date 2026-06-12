@@ -20,15 +20,15 @@ func (e userError) Message() string {
 	return string(e)
 }
 
-func HandleFileList(writer http.ResponseWriter, //输出，输入浏览器显示
-	request *http.Request) error { //输入，用户请求信息
+func HandleFileList(writer http.ResponseWriter,
+	request *http.Request) error {
 	fmt.Println()
 	if strings.Index(
-		request.URL.Path, prefix) != 0 { //是否以prefix开头
+		request.URL.Path, prefix) != 0 {
 		return userError("path must start with" + prefix)
-	}
 
-	path := request.URL.Path[len("/list/"):] //拿到想读的文件
+	}
+	path := request.URL.Path[len("/list"):]
 	file, err := os.Open(path)
 	if err != nil {
 		return err
@@ -38,8 +38,7 @@ func HandleFileList(writer http.ResponseWriter, //输出，输入浏览器显示
 	all, err := io.ReadAll(file)
 	if err != nil {
 		panic(err)
-
 	}
-	writer.Write(all) //write进浏览器里面
+	writer.Write(all)
 	return nil
 }

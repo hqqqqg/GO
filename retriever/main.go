@@ -1,5 +1,4 @@
-// duck typing
-// 是鸭子又不是鸭子？？？
+// 接口
 
 package main
 

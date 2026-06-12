@@ -1,11 +1,8 @@
-//用函数遍历二叉树
-
 package main
 
 import (
 	"fmt"
-
-	"google/functional/tree"
+	"pra/functional/tree"
 )
 
 type myTreeNode struct {
@@ -13,13 +10,13 @@ type myTreeNode struct {
 }
 
 func main() {
-	var root tree.Node //root的值为0
+	var root tree.Node
 
 	root = tree.Node{Value: 3}
 	root.Left = &tree.Node{}
 	root.Right = &tree.Node{5, nil, nil}
-	root.Right.Left = new(tree.Node) //创建结构体
 	root.Left.Right = tree.CreateNode(2)
+	root.Right.Left = new(tree.Node)
 	root.Right.Left.SetValue(4)
 
 	root.Traverse()
@@ -29,14 +26,4 @@ func main() {
 		nodeCount++
 	})
 	fmt.Println("Node count:", nodeCount)
-
-	//channel遍历统计最大数
-	c := root.TraverseWithChannel()
-	maxNode := 0
-	for node := range c {
-		if node.Value > maxNode {
-			maxNode = node.Value
-		}
-	}
-	fmt.Println("Max node value:", maxNode)
 }

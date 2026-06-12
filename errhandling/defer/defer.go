@@ -28,7 +28,7 @@ func writeFile(filename string) {
 
 	f := fib.Fibonacci()
 	for i := 0; i < 20; i++ {
-		fmt.Fprintln(writer, f())
+		fmt.Fprintln(writer, f()) //指定目的地打印
 	}
 }
 

@@ -38,7 +38,7 @@ func TestSubstr(t *testing.T) {
 // 性能测试go test -bench . 记得加点！！
 // 生成文件 go test -bench. -cpuprofile cpu.out
 // 使用工具进入另一个环境 go tool pprof cpu.out
-// 在pprof里用web画图看性能消耗,画出来的图看不到全貌！！！！！
+// 在pprof里用web画图看性能消耗
 func BenchmarkSubstr(b *testing.B) { // BenchmarkXxx
 	s := "黑化肥挥发发灰会花飞灰化肥挥发发黑会飞花"
 	for i := 0; i < 13; i++ {

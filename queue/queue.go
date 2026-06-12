@@ -4,7 +4,7 @@
 // go doc Queue.IsEmpty 查看这个函数
 // go help doc
 // go doc fmt.Println
-// pkgsite -http :6060  godoc弃用，用这个新的东西找不到我的文档
+// pkgsite -http :6060  godoc弃用，用这个新的东西有点怪
 package queue
 
 // 1

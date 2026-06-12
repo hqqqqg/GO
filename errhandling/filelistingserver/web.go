@@ -6,9 +6,14 @@ import (
 	"google/errhandling/filelistingserver/filelisting"
 	"log"
 	"net/http"
+	_ "net/http/pprof" //加下划线就不会消失，端口后面加/debug/pprof
 	"os"
 )
 
+// http服务器性能分析
+// 端口/debug/pprof
+// go tool pprof http://localhost:8888/debug/pprof/profile  web  获得30scpu使用率，可以去刷一下页面
+// go tool pprof http://localhost:8888/debug/pprof/heap
 type appHandler func(writer http.ResponseWriter, //向浏览器发送
 	request *http.Request) error //用户发来请求
 
@@ -26,10 +31,11 @@ func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) { /
 			// log.Warn("Error handling request: %s", err.Error)
 			log.Printf("Error occurred"+"handling request:%s", err.Error())
 
-			if userErr, ok := err.(userError); ok {
+			if userErr, ok := err.(userError); ok { //是用户的错
 				http.Error(writer, userErr.Message(), http.StatusBadRequest) //将userErr.Message()给用户看，并附上错误类型
 				return
 			}
+			//不是用户的错
 			code := http.StatusOK
 			switch {
 			case os.IsNotExist(err):

@@ -1,6 +1,3 @@
-// 查看哪个更消耗性能go test -bench . -cpuprofile cpu.out
-// 查看文件 go tool pprof cpu.out
-// 画图查看哪个更消耗 web
 package main
 
 import (
