@@ -8,6 +8,7 @@ import (
 	"fmt"      //格式化输出
 	"io"       //基础I/O
 	"net/http" //网络通讯 发送HTTP请求
+	"regexp"
 
 	"golang.org/x/net/html/charset"      //官方扩展包 自动嗅探HTML网页的编码
 	"golang.org/x/text/encoding"         //文本编码接口
@@ -49,7 +50,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%s\n", all) //转换为字符串并打印
+	printCityList(all)
 }
 
 // 这是一个极其好用的通用函数，专门用来“智能探测”网页编码
@@ -65,4 +66,16 @@ func determineEncoding(r *bufio.Reader) encoding.Encoding {
 	//返回这个网页的真实编码e
 	e, _, _ := charset.DetermineEncoding(bytes, "")
 	return e
+}
+func printCityList(contents []byte) {
+	pattern := `<a href="(https?://www.zhenai.com/zhenghun/[0-9a-z]+)"[^>]*>([^<]+)</a>` //有必要再深究
+	re := regexp.MustCompile(pattern)
+	matches := re.FindAllSubmatch(contents, -1) //所有匹配
+	for _, m := range matches {
+		fmt.Printf("City:%s,URL:%s\n",
+			m[2], m[1])
+	}
+	fmt.Printf("Matches found:%d\n",
+		len(matches))
+
 }
