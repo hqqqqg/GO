@@ -27,7 +27,7 @@ func TestParseCityList(t *testing.T) {
 		"http://www.zhenai.com/zhenghun/cangzhou",
 	}
 	expectedCities := []string{
-		"阿坝", "白城", "沧州",
+		"City 阿坝", "City 白城", "City 沧州",
 	}
 
 	if len(result.Requests) != resultSize {
