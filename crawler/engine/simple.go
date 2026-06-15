@@ -6,7 +6,11 @@ import (
 	"log"
 )
 
-func Run(seeds ...Request) { //可以丢任意数量的种子
+// 简单调度器
+type SimpleEngine struct {
+}
+
+func (e SimpleEngine) Run(seeds ...Request) { //可以丢任意数量的种子
 	var requests []Request //任务队列
 	for _, r := range seeds {
 		requests = append(requests, r) //种子塞进排队通道
@@ -27,7 +31,8 @@ func Run(seeds ...Request) { //可以丢任意数量的种子
 }
 
 // 将parser和fetch合起来
-func worker(r Request) (ParseResult, error) {
+func worker(
+	r Request) (ParseResult, error) {
 	log.Printf("Fetching %s", r.Url)  //打印日志，在抓谁
 	body, err := fetcher.Fetch(r.Url) //抓源码存到body
 	if err != nil {
@@ -36,5 +41,5 @@ func worker(r Request) (ParseResult, error) {
 			r.Url, err)
 		return ParseResult{}, err //ParseResult是结构体
 	}
-	return r.ParserFunc(body), nil
+	return r.ParserFunc(body), nil //调用解析函数
 }

@@ -12,7 +12,6 @@ func ParseCityList(
 	re := regexp.MustCompile(cityListRe)
 	matches := re.FindAllSubmatch(contents, -1) //所有匹配
 	result := engine.ParseResult{}
-	limit := 10
 	for _, m := range matches {
 		result.Items = append(
 			result.Items, "City "+string(m[2])) //将城市名字作为item返回出去
@@ -21,10 +20,6 @@ func ParseCityList(
 				Url:        string(m[1]),
 				ParserFunc: ParseCity, //城市里面找用户
 			})
-		limit--
-		if limit == 0 {
-			break
-		}
 	}
 	return result
 
