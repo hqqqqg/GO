@@ -13,12 +13,17 @@ func ParseCity(
 	matches := re.FindAllSubmatch(contents, -1) //所有匹配
 	result := engine.ParseResult{}
 	for _, m := range matches {
+		name := string(m[2])
 		result.Items = append(
-			result.Items, "User"+string(m[2])) //将城市名字作为item返回出去
+			result.Items, "User"+name) //将用户名字作为item返回出去
 		result.Requests = append(
 			result.Requests, engine.Request{
-				Url:        string(m[1]),
-				ParserFunc: engine.NilParser,
+				Url: string(m[1]),
+				ParserFunc: func(
+					c []byte) engine.ParseResult {
+					return ParseProfile( //用户信息
+						c, name)
+				},
 			})
 	}
 	return result

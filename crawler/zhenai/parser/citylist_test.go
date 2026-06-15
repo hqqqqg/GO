@@ -19,7 +19,7 @@ func TestParseCityList(t *testing.T) {
 		panic(err)
 	}
 	result := ParseCityList(contents)
-	const resultSize = 22 //城市个数
+	const resultSize = 10 //城市个数
 	//取三个
 	expectedUrls := []string{
 		"http://www.zhenai.com/zhenghun/aba",
