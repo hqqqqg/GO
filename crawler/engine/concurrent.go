@@ -10,19 +10,18 @@ type ConcurrentEngine struct {
 type Scheduler interface {
 	Submit(Request) //submit?
 	ConfigureMasterWorkerChan(chan Request)
+	WorkerReady(chan Request)
+	Run()
 }
 
 func (e *ConcurrentEngine) Run(seeds ...Request) {
 
-	//建worker
-	//先创建两个channel 无缓冲
-	in := make(chan Request)
 	out := make(chan ParseResult)
-	e.Scheduler.ConfigureMasterWorkerChan(in) //crawler/scheduler/simple.go in和workerchan是同一channel
+	e.Scheduler.Run() //queued.go
 
-	//启动10个worker goroutine
+	//启动n个worker goroutine
 	for i := 0; i < e.WorkerCount; i++ {
-		createWorker(in, out)
+		createWorker(out, e.Scheduler)
 	}
 	//投喂种子任务
 	for _, r := range seeds {
@@ -43,10 +42,12 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 }
 
 func createWorker(
-	in chan Request, out chan ParseResult) {
+	out chan ParseResult, s Scheduler) {
+	in := make(chan Request) //私有的
 	go func() {
-		for { //死循环
-			request := <-in                //阻塞，等in管道有数据
+		for {
+			s.WorkerReady(in)
+			request := <-in                //QueuedScheduler的workerChan选择了in,类型一样
 			result, err := worker(request) //拿到就干活
 			if err != nil {
 				continue
