@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"golang.org/x/net/html/charset"
 	"golang.org/x/text/encoding"
@@ -13,7 +14,10 @@ import (
 	"golang.org/x/text/transform"
 )
 
+var rateLimiter = time.Tick(10 * time.Millisecond) //每10毫秒发送一次，防止网站限流
+
 func Fetch(url string) ([]byte, error) {
+	<-rateLimiter
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
