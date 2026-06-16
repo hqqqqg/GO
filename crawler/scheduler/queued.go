@@ -1,4 +1,5 @@
 // 控制request和worker，建两个队列
+// 每个worker有自己的channel
 package scheduler
 
 import "google/crawler/engine"
@@ -8,16 +9,16 @@ type QueuedScheduler struct {
 	workerChan  chan chan engine.Request //workerready往这里
 }
 
+func (s *QueuedScheduler) WorkerChan() chan engine.Request {
+	return make(chan engine.Request) //给每个worker自己的channel
+}
+
 func (s *QueuedScheduler) Submit(r engine.Request) {
 	s.requestChan <- r
 }
 func (s *QueuedScheduler) WorkerReady( //有一个worker准备好接收request
 	w chan engine.Request) {
 	s.workerChan <- w
-}
-
-func (s *QueuedScheduler) ConfigureMasterWorkerChan(c chan engine.Request) {
-	panic("implement me")
 }
 
 func (s *QueuedScheduler) Run() {

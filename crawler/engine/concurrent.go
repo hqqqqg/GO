@@ -8,10 +8,15 @@ type ConcurrentEngine struct {
 }
 
 type Scheduler interface {
-	Submit(Request) //submit?
-	ConfigureMasterWorkerChan(chan Request)
-	WorkerReady(chan Request)
+	ReadyNotifier
+	Submit(Request)           //放到in里面
+	WorkerChan() chan Request //我有worker，给我哪种channel
 	Run()
+}
+
+// workerready拿出来了
+type ReadyNotifier interface {
+	WorkerReady(chan Request)
 }
 
 func (e *ConcurrentEngine) Run(seeds ...Request) {
@@ -21,7 +26,8 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 
 	//启动n个worker goroutine
 	for i := 0; i < e.WorkerCount; i++ {
-		createWorker(out, e.Scheduler)
+		createWorker(e.Scheduler.WorkerChan(), //问scheduler要channel，对共用和各一个channel都实现，
+			out, e.Scheduler) //scheduler有readynotifier不用改
 	}
 	//投喂种子任务
 	for _, r := range seeds {
@@ -41,12 +47,11 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	}
 }
 
-func createWorker(
-	out chan ParseResult, s Scheduler) {
-	in := make(chan Request) //私有的
+func createWorker(in chan Request,
+	out chan ParseResult, ready ReadyNotifier) {
 	go func() {
 		for {
-			s.WorkerReady(in)
+			ready.WorkerReady(in)
 			request := <-in                //QueuedScheduler的workerChan选择了in,类型一样
 			result, err := worker(request) //拿到就干活
 			if err != nil {
