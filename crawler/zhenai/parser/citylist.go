@@ -13,8 +13,6 @@ func ParseCityList(
 	matches := re.FindAllSubmatch(contents, -1) //所有匹配
 	result := engine.ParseResult{}
 	for _, m := range matches {
-		result.Items = append(
-			result.Items, "City "+string(m[2])) //将城市名字作为item返回出去
 		result.Requests = append(
 			result.Requests, engine.Request{
 				Url:        string(m[1]),

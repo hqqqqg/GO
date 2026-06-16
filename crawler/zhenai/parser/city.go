@@ -20,8 +20,6 @@ func ParseCity(
 	result := engine.ParseResult{}
 	for _, m := range matches {
 		name := string(m[2])
-		result.Items = append(
-			result.Items, "User"+name) //将用户名字作为item返回出去
 		result.Requests = append(
 			result.Requests, engine.Request{
 				Url: string(m[1]),

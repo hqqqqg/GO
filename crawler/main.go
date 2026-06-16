@@ -5,6 +5,7 @@ package main
 
 import (
 	"google/crawler/engine"
+	"google/crawler/persist"
 	"google/crawler/scheduler"
 	"google/crawler/zhenai/parser"
 )
@@ -14,6 +15,7 @@ func main() {
 		Scheduler: &scheduler.QueuedScheduler{},
 		// Scheduler:   &scheduler.SimpleScheduler{},
 		WorkerCount: 100,
+		ItemChan:    persist.ItemSaver(),
 	}
 	// e.Run(engine.Request{
 	// 	Url:        "http://www.zhenai.com/zhenghun",
