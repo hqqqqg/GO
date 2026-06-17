@@ -6,8 +6,15 @@ type Request struct {
 }
 
 type ParseResult struct {
-	Requests []Request     //任务队列
-	Items    []interface{} //抠出来的城市名，用户的信息
+	Requests []Request //任务队列
+	Items    []Item    //抠出来的城市名，用户的信息
+}
+
+type Item struct {
+	Url     string
+	Type    string
+	Id      string
+	Payload interface{}
 }
 
 func NilParser([]byte) ParseResult {

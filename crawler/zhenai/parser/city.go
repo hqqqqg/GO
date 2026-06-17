@@ -19,14 +19,15 @@ func ParseCity(
 		contents, -1) //所有匹配
 	result := engine.ParseResult{}
 	for _, m := range matches {
+		url := string(m[1])
 		name := string(m[2])
 		result.Requests = append(
 			result.Requests, engine.Request{
-				Url: string(m[1]),
+				Url: url,
 				ParserFunc: func(
 					c []byte) engine.ParseResult {
 					return ParseProfile( //用户信息
-						c, name)
+						c, url, name)
 				},
 			})
 	}

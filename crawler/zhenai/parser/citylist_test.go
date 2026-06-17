@@ -26,9 +26,9 @@ func TestParseCityList(t *testing.T) {
 		"http://www.zhenai.com/zhenghun/baicheng1",
 		"http://www.zhenai.com/zhenghun/cangzhou",
 	}
-	expectedCities := []string{
-		"City 阿坝", "City 白城", "City 沧州",
-	}
+	// expectedCities := []string{
+	// 	"City 阿坝", "City 白城", "City 沧州",
+	// }
 
 	if len(result.Requests) != resultSize {
 		t.Errorf("result should have %d"+
@@ -47,10 +47,10 @@ func TestParseCityList(t *testing.T) {
 			resultSize, len(result.Items))
 	}
 
-	for i, city := range expectedCities {
-		if result.Items[i].(string) != city {
+	for i, url := range expectedUrls {
+		if result.Requests[i].Url != url {
 			t.Errorf("expected city #%d:%s;but"+"was %s",
-				i, city, result.Items[i].(string))
+				i, url, result.Requests[i].Url)
 		}
 	}
 

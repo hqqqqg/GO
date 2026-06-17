@@ -3,7 +3,7 @@ package engine
 type ConcurrentEngine struct {
 	Scheduler   Scheduler //调度器接口
 	WorkerCount int       //10个worker
-	ItemChan    chan interface{}
+	ItemChan    chan Item
 }
 
 type Scheduler interface {
@@ -56,4 +56,15 @@ func createWorker(in chan Request,
 			out <- result //干完活就把结果发到out管道
 		}
 	}()
+}
+
+// 去重
+var visitedUrls = make(map[string]bool) //记录已经访问过的url
+
+func isDuplicate(url string) bool {
+	if visitedUrls[url] { //这个url之前是否已经存在
+		return true //存在
+	}
+	visitedUrls[url] = true //已访问
+	return false            //不是重复的
 }

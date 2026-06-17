@@ -1,56 +1,61 @@
-package persist
+package persist // 负责把爬下来的数据保存到 elasticsearch
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
+	"bytes"                 // 把字节数组转成 io.Reader，给 es 客户端用
+	"encoding/json"         // 把 struct 序列化成 JSON 字节流
+	"errors"                // 创建一个带消息的 error
+	"google/crawler/engine" // 引入 engine 包，定义了 Item 类型
 	"log"
 
-	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8" // 官方 elasticsearch 客户端 v8
 )
 
-func ItemSaver() chan interface{} {
-	out := make(chan interface{})
-	go func() {
-		itemCount := 0
-		for {
+func ItemSaver() chan engine.Item { //
+	out := make(chan engine.Item) // 无缓冲的item管道
+	go func() {                   // goroutine 后台持续消费 out 管道
+		itemCount := 0 // 已经处理了多少条 item
+		for {          // 持续接收并保存 item，直到进程退出
 			item := <-out
 			log.Printf("Item Saver:got item "+
 				"#%d:%v", itemCount, item) //要存的内容先打印
 			itemCount++
 
-			save(item)
+			err := save(&item) // 调用 save 真正把 item 写进 elasticsearch
+			if err != nil {
+				log.Printf("Item Saver:error"+
+					"Saving item %v:%v",
+					item, err)
+			}
 		}
 	}()
 	return out
 }
 
-func save(item interface{}) (
-	id string, err error) {
-	client, err := elasticsearch.NewDefaultClient() //初始化，不用手动关闭sniff
-	//Must turn off sniff in docker
-	if err != nil {
-		return "", err
+func save(item *engine.Item) error {
+	if item.Type == "" { // item 必须有 Type
+		return errors.New("must supply Type") // 返回错误
 	}
-	data, err := json.Marshal(item) //item转换为json字节，body只接受字节流
-	resp, err := client.Index(
-		"dating_profile",      // 索引名称,http://localhost:9200/dating_profile/_search可搜索到
-		bytes.NewReader(data), // 文档内容 ，包装成 Reader，
-		client.Index.WithContext(context.Background()),
-	)
 
+	client, err := elasticsearch.NewDefaultClient() // 创建默认 es 客户端（连本机 localhost:9200）
+	if err != nil {                                 // 创建失败时
+		return err // 错误向上抛
+	}
+
+	body, err := json.Marshal(item) // 把 item 序列化成 JSON 字节数组
 	if err != nil {
-		return "", err
+		return err // 返回错误
+	}
+
+	resp, err := client.Index("dating_profile", // 向 dating_profile 索引写入
+		bytes.NewReader(body),                // 用 Reader 包装一下交给 es 客户端
+		client.Index.WithDocumentID(item.Id)) // 用 item.Id 作为 id
+	if err != nil {
+		return err
 	}
 	defer resp.Body.Close()
-	// 定义一个匿名结构体，专门用来接收 JSON 里的 "_id" 字段
-	var result struct {
-		Id string `json:"_id"`
-	}
 
-	// 将 resp.Body (字节流) 解析到我们的结构体中
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return "", err
+	if resp.IsError() {
+		return errors.New(resp.String())
 	}
-	return result.Id, nil
+	return nil // 表示成功
 }
