@@ -14,21 +14,16 @@ var (
 )
 
 func ParseCity(
-	contents []byte) engine.ParseResult {
+	contents []byte, url string) engine.ParseResult {
 	matches := profileRe.FindAllSubmatch(
 		contents, -1) //所有匹配
 	result := engine.ParseResult{}
 	for _, m := range matches {
-		url := string(m[1])
-		name := string(m[2])
 		result.Requests = append(
 			result.Requests, engine.Request{
-				Url: url,
-				ParserFunc: func(
-					c []byte) engine.ParseResult {
-					return ParseProfile( //用户信息
-						c, url, name)
-				},
+				Url: string(m[1]),
+				ParserFunc: ProfileParser(
+					string(m[2])),
 			})
 	}
 	matches = cityUrlRe.FindAllSubmatch(
@@ -36,8 +31,9 @@ func ParseCity(
 	for _, m := range matches {
 		result.Requests = append(result.Requests,
 			engine.Request{
-				Url:        string(m[1]),
-				ParserFunc: ParseCity,
+				Url: string(m[1]),
+				ParserFunc: ProfileParser(
+					string(m[2])),
 			})
 	}
 	return result

@@ -1,8 +1,10 @@
 package engine
 
+type ParserFunc func(
+	content []byte, url string) ParseResult
 type Request struct {
 	Url        string
-	ParserFunc func([]byte) ParseResult //下载完源码后调用ParserFunc函数解析
+	ParserFunc ParserFunc //下载完源码后调用ParserFunc函数解析
 }
 
 type ParseResult struct {

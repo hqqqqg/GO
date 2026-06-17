@@ -69,16 +69,10 @@ func ParseProfile( // 给 engine 用的解析函数，解析一个用户主页
 	matches := guessRe.FindAllSubmatch( // 在 HTML 里查找所有“猜你喜欢”用户
 		contents, -1) // 找全
 	for _, m := range matches { // 遍历每一个匹配
-		url := string(m[1])                       // 推荐用户的个人主页 URL
-		name := string(m[2])                      // 推荐用户的昵称
 		result.Requests = append(result.Requests, // 把这些推荐用户作为新任务追加到结果
 			engine.Request{ // 构造一条新的 Request 交给 engine 调度
-				Url: url, // 推荐用户的主页 URL
-				ParserFunc: func( // 闭包作为该 URL 下载完后的解析函数
-					c []byte) engine.ParseResult { // 参数 c 是下载好的 HTML
-					return ParseProfile( // 复用同一个解析器
-						c, url, name) //通过闭包传进去
-				},
+				Url:        string(m[1]), // 推荐用户的主页 URL
+				ParserFunc: ProfileParser(string(m[2])),
 			})
 	}
 	return result // 返回 engine
@@ -90,5 +84,14 @@ func extractString(contents []byte, re *regexp.Regexp) string {
 		return string(match[1]) // 转成 string 返回
 	} else { // 没匹配上
 		return ""
+	}
+}
+
+func ProfileParser(
+	name string) engine.ParserFunc {
+	return func(
+		c []byte, url string) engine.ParseResult { // 参数 c 是下载好的 HTML
+		return ParseProfile(c, url, name) // 复用同一个解析器
+
 	}
 }

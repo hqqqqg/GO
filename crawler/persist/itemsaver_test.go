@@ -1,4 +1,4 @@
-package persist
+package persist //启动docker的es
 
 import (
 	"encoding/json"
@@ -30,18 +30,17 @@ func TestSave(t *testing.T) {
 			Car:        "未购车",
 		},
 	}
-
-	err := save(&expected)
-	if err != nil {
-		t.Fatalf("save error: %v", err)
-	}
-
 	client, err := elasticsearch.NewDefaultClient()
 	if err != nil {
 		panic(err)
 	}
+	const index = "dating_test"
+	err = save(client, index, &expected)
+	if err != nil {
+		t.Fatalf("save error: %v", err)
+	}
 
-	resp, err := client.Get("dating_profile", expected.Id)
+	resp, err := client.Get(index, expected.Id)
 	if err != nil {
 		panic(err)
 	}

@@ -18,7 +18,7 @@ func TestParseCityList(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	result := ParseCityList(contents)
+	result := ParseCityList(contents, "")
 	const resultSize = 10 //城市个数
 	//取三个
 	expectedUrls := []string{
