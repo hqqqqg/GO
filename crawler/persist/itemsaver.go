@@ -24,7 +24,7 @@ func ItemSaver(index string) (chan engine.Item, error) { //
 				"#%d:%v", itemCount, item) //要存的内容先打印
 			itemCount++
 
-			err := save(client, index, &item) // 调用 save 真正把 item 写进 elasticsearch
+			err := Save(client, index, &item) // 调用 save 真正把 item 写进 elasticsearch
 			if err != nil {
 				log.Printf("Item Saver:error"+
 					"Saving item %v:%v",
@@ -35,7 +35,7 @@ func ItemSaver(index string) (chan engine.Item, error) { //
 	return out, nil
 }
 
-func save(
+func Save(
 	client *elasticsearch.Client, index string, //由外面告诉index
 	item *engine.Item) error {
 	if item.Type == "" { // item 必须有 Type
