@@ -16,5 +16,5 @@ func worker(
 			r.Url, err)
 		return ParseResult{}, err //ParseResult是结构体
 	}
-	return r.ParserFunc(body, r.Url), nil //调用解析函数
+	return r.Parser.Parse(body, r.Url), nil //调用解析函数
 }

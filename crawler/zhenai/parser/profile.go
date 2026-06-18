@@ -22,7 +22,7 @@ var carRe = regexp.MustCompile(`<td><span class="label">是否购车:</span>([^<
 var guessRe = regexp.MustCompile(`<a class="exp-user-name"[^>]*href="(http://album\.zhenai\.com/u/[\d]+)"[^>]*>([^<]+)</a>`) // 猜你喜欢区域的推荐用户，第 1 组是 URL，第 2 组是名字
 var idUrlRe = regexp.MustCompile(`http://album.zhenai.com/u/([\d]+)`)                                                        // 从用户主页 URL 里抽出纯数字 ID
 
-func ParseProfile( // 给 engine 用的解析函数，解析一个用户主页
+func parseProfile( // 给 engine 用的解析函数，解析一个用户主页
 	contents []byte, url string,
 	name string) engine.ParseResult { //
 	profile := model.Profile{}
@@ -71,8 +71,9 @@ func ParseProfile( // 给 engine 用的解析函数，解析一个用户主页
 	for _, m := range matches { // 遍历每一个匹配
 		result.Requests = append(result.Requests, // 把这些推荐用户作为新任务追加到结果
 			engine.Request{ // 构造一条新的 Request 交给 engine 调度
-				Url:        string(m[1]), // 推荐用户的主页 URL
-				ParserFunc: ProfileParser(string(m[2])),
+				Url: string(m[1]), // 推荐用户的主页 URL
+				Parser: NewProfileParser(
+					string(m[2])),
 			})
 	}
 	return result // 返回 engine
@@ -87,11 +88,24 @@ func extractString(contents []byte, re *regexp.Regexp) string {
 	}
 }
 
-func ProfileParser(
-	name string) engine.ParserFunc {
-	return func(
-		c []byte, url string) engine.ParseResult { // 参数 c 是下载好的 HTML
-		return ParseProfile(c, url, name) // 复用同一个解析器
+type ProfileParser struct {
+	userName string
+}
 
+func (p *ProfileParser) Parse(
+	contents []byte,
+	url string) engine.ParseResult {
+	return parseProfile(contents, url, p.userName)
+}
+
+func (p *ProfileParser) Serialize() (
+	name string, args interface{}) {
+	return "ProfileParser", p.userName
+}
+
+func NewProfileParser(
+	name string) *ProfileParser {
+	return &ProfileParser{
+		userName: name,
 	}
 }

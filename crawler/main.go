@@ -27,7 +27,9 @@ func main() {
 	// 	ParserFunc: parser.ParseCityList,
 	// })
 	e.Run(engine.Request{
-		Url:        "http://www.zhenai.com/zhenghun/shanghai",
-		ParserFunc: parser.ParseCity,
+		Url: "http://www.zhenai.com/zhenghun/shanghai",
+		Parser: engine.NewFuncParser(
+			parser.ParseCityList,
+			"ParseCityList"),
 	})
 }

@@ -15,8 +15,9 @@ func ParseCityList(
 	for _, m := range matches {
 		result.Requests = append(
 			result.Requests, engine.Request{
-				Url:        string(m[1]),
-				ParserFunc: ParseCity, //城市里面找用户
+				Url: string(m[1]),
+				Parser: engine.NewFuncParser(
+					ParseCity, "ParseCity"),
 			})
 	}
 	return result

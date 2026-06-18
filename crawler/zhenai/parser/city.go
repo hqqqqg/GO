@@ -22,7 +22,7 @@ func ParseCity(
 		result.Requests = append(
 			result.Requests, engine.Request{
 				Url: string(m[1]),
-				ParserFunc: ProfileParser(
+				Parser: NewProfileParser(
 					string(m[2])),
 			})
 	}
@@ -32,8 +32,8 @@ func ParseCity(
 		result.Requests = append(result.Requests,
 			engine.Request{
 				Url: string(m[1]),
-				ParserFunc: ProfileParser(
-					string(m[2])),
+				Parser: engine.NewFuncParser(
+					ParseCity, "ParseCity"),
 			})
 	}
 	return result
