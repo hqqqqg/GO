@@ -6,7 +6,7 @@ import (
 )
 
 // 将parser和fetch合起来
-func worker(
+func Worker(
 	r Request) (ParseResult, error) {
 	log.Printf("Fetching %s", r.Url)  //打印日志，在抓谁
 	body, err := fetcher.Fetch(r.Url) //用url抓源码存到body

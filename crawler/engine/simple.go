@@ -17,7 +17,7 @@ func (e SimpleEngine) Run(seeds ...Request) { //可以丢任意数量的种子
 	for len(requests) > 0 {
 		r := requests[0]
 		requests = requests[1:]
-		parseResult, err := worker(r)
+		parseResult, err := Worker(r)
 		if err != nil {
 			continue
 		}

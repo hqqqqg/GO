@@ -1,4 +1,4 @@
-// docker start es
+// docker start es 启动elasticsearch容器后运行测试
 package main
 
 import (
@@ -12,10 +12,8 @@ import (
 
 func TestItemSaver(t *testing.T) {
 	const host = ":1234"
-	//server
-	go serveRpc(host, "test1") //测试可以就这么写
-	time.Sleep((time.Second))  //给时间listen
-	//client
+	go serveRpc(host, "test1")
+	time.Sleep((time.Second))
 	client, err := rpcsupport.NewClient(host)
 	if err != nil {
 		panic(err)

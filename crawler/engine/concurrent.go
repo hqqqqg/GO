@@ -49,7 +49,7 @@ func createWorker(in chan Request,
 		for {
 			ready.WorkerReady(in)
 			request := <-in                //QueuedScheduler的workerChan选择了in,类型一样
-			result, err := worker(request) //拿到就干活
+			result, err := Worker(request) //拿到就干活
 			if err != nil {
 				continue
 			}
