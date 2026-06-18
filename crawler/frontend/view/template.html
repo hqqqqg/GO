@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>相亲对象搜索结果</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <h1>相亲对象搜索结果</h1>
+
+    <p class="hits">找到了 {{.Hits}} 个相亲对象</p>
+
+    <div class="result-list">
+        {{range .Items}}
+        <div class="profile-card">
+            <h3>
+                {{.Payload.Name}}
+                <small>({{.Payload.Gender}})</small>
+            </h3>
+            <div class="fields">
+                <div class="field"><span>年龄:</span> {{.Payload.Age}}</div>
+                <div class="field"><span>身高:</span> {{.Payload.Height}} cm</div>
+                <div class="field"><span>体重:</span> {{.Payload.Weight}} kg</div>
+                <div class="field"><span>收入:</span> {{.Payload.Income}}</div>
+                <div class="field"><span>学历:</span> {{.Payload.Education}}</div>
+                <div class="field"><span>职业:</span> {{.Payload.Occupation}}</div>
+                <div class="field"><span>籍贯:</span> {{.Payload.Hokou}}</div>
+                <div class="field"><span>星座:</span> {{.Payload.Xinzuo}}</div>
+                <div class="field"><span>婚姻:</span> {{.Payload.Marriage}}</div>
+                <div class="field"><span>购房:</span> {{.Payload.House}}</div>
+                <div class="field"><span>购车:</span> {{.Payload.Car}}</div>
+            </div>
+            <a class="origin-link" href="{{.Url}}" target="_blank">查看原页面</a>
+        </div>
+        {{else}}
+        <p class="empty">没有匹配的结果</p>
+        {{end}}
+    </div>
+
+    <div class="pagination">
+        <a href="?q={{.Query}}&from={{.PrevFrom}}">上一页</a>
+        <a href="?q={{.Query}}&from={{.NextFrom}}">下一页</a>
+    </div>
+</body>
+</html>
