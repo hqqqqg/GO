@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"google/crawler_distributed/config"
 	"google/crawler_distributed/persist"
 	"google/crawler_distributed/rpcsupport"
 	"log"
@@ -9,7 +11,9 @@ import (
 )
 
 func main() {
-	log.Fatal(serveRpc(":1234", "dating_profile"))
+	log.Fatal(serveRpc(
+		fmt.Sprintf(":%d", config.ItemSaverPort),
+		config.ElasticIndex))
 }
 
 func serveRpc(host, index string) error {

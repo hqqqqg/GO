@@ -4,6 +4,7 @@ package main
 import (
 	"google/crawler/engine"
 	"google/crawler/model"
+	"google/crawler_distributed/config"
 	"google/crawler_distributed/rpcsupport"
 	"testing"
 	"time"
@@ -12,8 +13,8 @@ import (
 func TestItemSaver(t *testing.T) {
 	const host = ":1234"
 	//server
-	go serveRpc(host, "test1")
-	time.Sleep((time.Second)) //给时间listen
+	go serveRpc(host, "test1") //测试可以就这么写
+	time.Sleep((time.Second))  //给时间listen
 	//client
 	client, err := rpcsupport.NewClient(host)
 	if err != nil {
@@ -41,7 +42,7 @@ func TestItemSaver(t *testing.T) {
 		},
 	}
 	result := ""
-	err = client.Call("ItemSaverService.Save",
+	err = client.Call(config.ItemSaverRpc,
 		item, &result)
 	if err != nil || result != "ok" {
 		t.Errorf("result:%s;err:%s",
