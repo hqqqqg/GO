@@ -10,7 +10,7 @@ import (
 
 func ItemSaver( //通过RPC将item发往远程存储
 	host string) (chan engine.Item, error) {
-	client, err := rpcsupport.NewClient(host) //RPC客户端连接到 temSaver服务
+	client, err := rpcsupport.NewClient(host) //RPC客户端连接到itemSaver服务
 	if err != nil {
 		return nil, err
 	}
