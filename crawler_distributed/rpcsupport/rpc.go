@@ -14,6 +14,7 @@ func ServeRpc(host string, service interface{}) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("Listening on %s", host) //告诉你在哪个port
 	for {
 		conn, err := listener.Accept() //等待客户端连接
 		if err != nil {

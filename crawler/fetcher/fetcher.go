@@ -3,6 +3,7 @@ package fetcher
 import (
 	"bufio"
 	"fmt"
+	"google/crawler_distributed/config"
 	"io"
 	"log"
 	"net/http"
@@ -14,10 +15,12 @@ import (
 	"golang.org/x/text/transform"
 )
 
-var rateLimiter = time.Tick(10 * time.Millisecond) //每10毫秒发送一次，防止网站限流
+var rateLimiter = time.Tick(
+	time.Second / config.Qps) //每10毫秒发送一次，防止网站限流
 
 func Fetch(url string) ([]byte, error) {
 	<-rateLimiter
+	log.Printf("Fetch url %s", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err

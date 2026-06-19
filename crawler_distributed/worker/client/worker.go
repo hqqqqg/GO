@@ -1,30 +1,26 @@
 package client
 
 import (
-	"fmt"
 	"google/crawler/engine"
 	"google/crawler_distributed/config"
-	"google/crawler_distributed/rpcsupport"
 	"google/crawler_distributed/worker"
+	"net/rpc"
 )
 
-func CreateProcessor() (engine.Processor, error) {
-	client, err := rpcsupport.NewClient(
-		fmt.Sprintf(":%d", config.WorkerPort0))
-	if err != nil {
-		return nil, err
-	}
+func CreateProcessor(
+	clientChan chan *rpc.Client) engine.Processor {
 
 	return func(
 		req engine.Request) (
 		engine.ParseResult, error) {
 		sReq := worker.SerializeRequest(req)
 		var sResult worker.ParseResult
-		err := client.Call(config.CrawlServiceRpc,
+		c := <-clientChan //从通道拿一个过来再call
+		err := c.Call(config.CrawlServiceRpc,
 			sReq, &sResult)
 		if err != nil {
 			return engine.ParseResult{}, err
 		}
 		return worker.DeserializeResult(sResult), nil
-	}, nil
+	}
 }

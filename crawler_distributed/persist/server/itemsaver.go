@@ -2,6 +2,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"google/crawler_distributed/config"
 	"google/crawler_distributed/persist"
@@ -11,10 +12,18 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
-func main() {
+var port = flag.Int("port", 0,
+	"the port for me to listen on")
+
+func main() { // 启动Worker RPC服务
+	flag.Parse()
+	if *port == 0 {
+		fmt.Println("must specify a port")
+		return
+	}
 	log.Fatal(serveRpc(
-		fmt.Sprintf(":%d", config.ItemSaverPort), //拼接监听地址
-		config.ElasticIndex))                     //使用配置中指定的ES索引名
+		fmt.Sprintf(":%d", *port), //拼接监听地址
+		config.ElasticIndex))      //使用配置中指定的ES索引名
 }
 
 func serveRpc(host, index string) error { // 启动 RPC 服务
